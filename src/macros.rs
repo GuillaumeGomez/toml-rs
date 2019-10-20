@@ -1,3 +1,4 @@
+#[cfg(feature = "serde")]
 pub use serde::de::{Deserialize, IntoDeserializer};
 
 use crate::value::{Array, Table, Value};
@@ -224,9 +225,12 @@ macro_rules! toml_internal {
 
     // Construct a Value from any other type, probably string or boolean or number.
     (@value $v:tt) => {{
-        // TODO: Implement this with something like serde_json::to_value instead.
-        let de = $crate::macros::IntoDeserializer::<$crate::de::Error>::into_deserializer($v);
-        <$crate::Value as $crate::macros::Deserialize>::deserialize(de).unwrap()
+        #[cfg(feature = "serde")]
+        {
+            // TODO: Implement this with something like serde_json::to_value instead.
+            let de = $crate::macros::IntoDeserializer::<$crate::de::Error>::into_deserializer($v);
+            <$crate::Value as $crate::macros::Deserialize>::deserialize(de).unwrap()
+        }
     }};
 
     // Base case of inline table.

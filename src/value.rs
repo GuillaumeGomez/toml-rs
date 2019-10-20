@@ -1,17 +1,24 @@
 //! Definition of a TOML value
 
 use std::collections::{BTreeMap, HashMap};
+#[cfg(feature = "serde")]
 use std::fmt;
 use std::hash::Hash;
 use std::mem::discriminant;
 use std::ops;
+#[cfg(feature = "serde")]
 use std::str::FromStr;
+#[cfg(feature = "serde")]
 use std::vec;
 
+#[cfg(feature = "serde")]
 use serde::de;
+#[cfg(feature = "serde")]
 use serde::de::IntoDeserializer;
+#[cfg(feature = "serde")]
 use serde::ser;
 
+#[cfg(feature = "serde")]
 use crate::datetime::{self, DatetimeFromString};
 pub use crate::datetime::{Datetime, DatetimeParseError};
 
@@ -50,6 +57,7 @@ impl Value {
     ///
     /// This conversion can fail if `T`'s implementation of `Serialize` decides to
     /// fail, or if `T` contains a map with non-string keys.
+    #[cfg(feature = "serde")]
     pub fn try_from<T>(value: T) -> Result<Value, crate::ser::Error>
     where
         T: ser::Serialize,
@@ -66,6 +74,7 @@ impl Value {
     /// something is wrong with the data, for example required struct fields are
     /// missing from the TOML map or some number is too big to fit in the expected
     /// primitive type.
+    #[cfg(feature = "serde")]
     pub fn try_into<'de, T>(self) -> Result<T, crate::de::Error>
     where
         T: de::Deserialize<'de>,
@@ -380,6 +389,7 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         crate::ser::to_string(self)
@@ -388,6 +398,7 @@ impl fmt::Display for Value {
     }
 }
 
+#[cfg(feature = "serde")]
 impl FromStr for Value {
     type Err = crate::de::Error;
     fn from_str(s: &str) -> Result<Value, Self::Err> {
@@ -395,6 +406,7 @@ impl FromStr for Value {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::Serialize for Value {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -442,6 +454,7 @@ impl ser::Serialize for Value {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::Deserialize<'de> for Value {
     fn deserialize<D>(deserializer: D) -> Result<Value, D::Error>
     where
@@ -541,6 +554,7 @@ impl<'de> de::Deserialize<'de> for Value {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::Deserializer<'de> for Value {
     type Error = crate::de::Error;
 
@@ -625,10 +639,12 @@ impl<'de> de::Deserializer<'de> for Value {
     }
 }
 
+#[cfg(feature = "serde")]
 struct SeqDeserializer {
     iter: vec::IntoIter<Value>,
 }
 
+#[cfg(feature = "serde")]
 impl SeqDeserializer {
     fn new(vec: Vec<Value>) -> Self {
         SeqDeserializer {
@@ -637,6 +653,7 @@ impl SeqDeserializer {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::SeqAccess<'de> for SeqDeserializer {
     type Error = crate::de::Error;
 
@@ -658,11 +675,13 @@ impl<'de> de::SeqAccess<'de> for SeqDeserializer {
     }
 }
 
+#[cfg(feature = "serde")]
 struct MapDeserializer {
     iter: <Map<String, Value> as IntoIterator>::IntoIter,
     value: Option<(String, Value)>,
 }
 
+#[cfg(feature = "serde")]
 impl MapDeserializer {
     fn new(map: Map<String, Value>) -> Self {
         MapDeserializer {
@@ -672,6 +691,7 @@ impl MapDeserializer {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::MapAccess<'de> for MapDeserializer {
     type Error = crate::de::Error;
 
@@ -710,6 +730,7 @@ impl<'de> de::MapAccess<'de> for MapDeserializer {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::IntoDeserializer<'de, crate::de::Error> for Value {
     type Deserializer = Self;
 
@@ -718,8 +739,10 @@ impl<'de> de::IntoDeserializer<'de, crate::de::Error> for Value {
     }
 }
 
+#[cfg(feature = "serde")]
 struct Serializer;
 
+#[cfg(feature = "serde")]
 impl ser::Serializer for Serializer {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -901,15 +924,18 @@ impl ser::Serializer for Serializer {
     }
 }
 
+#[cfg(feature = "serde")]
 struct SerializeVec {
     vec: Vec<Value>,
 }
 
+#[cfg(feature = "serde")]
 struct SerializeMap {
     map: Map<String, Value>,
     next_key: Option<String>,
 }
 
+#[cfg(feature = "serde")]
 impl ser::SerializeSeq for SerializeVec {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -927,6 +953,7 @@ impl ser::SerializeSeq for SerializeVec {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::SerializeTuple for SerializeVec {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -943,6 +970,7 @@ impl ser::SerializeTuple for SerializeVec {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::SerializeTupleStruct for SerializeVec {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -959,6 +987,7 @@ impl ser::SerializeTupleStruct for SerializeVec {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::SerializeTupleVariant for SerializeVec {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -975,6 +1004,7 @@ impl ser::SerializeTupleVariant for SerializeVec {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::SerializeMap for SerializeMap {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -1011,6 +1041,7 @@ impl ser::SerializeMap for SerializeMap {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::SerializeStruct for SerializeMap {
     type Ok = Value;
     type Error = crate::ser::Error;
@@ -1032,10 +1063,12 @@ impl ser::SerializeStruct for SerializeMap {
     }
 }
 
+#[cfg(feature = "serde")]
 struct DatetimeOrTable<'a> {
     key: &'a mut String,
 }
 
+#[cfg(feature = "serde")]
 impl<'a, 'de> de::DeserializeSeed<'de> for DatetimeOrTable<'a> {
     type Value = bool;
 
@@ -1047,6 +1080,7 @@ impl<'a, 'de> de::DeserializeSeed<'de> for DatetimeOrTable<'a> {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'a, 'de> de::Visitor<'de> for DatetimeOrTable<'a> {
     type Value = bool;
 

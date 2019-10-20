@@ -15,6 +15,7 @@
 //! [`LinkedHashMap`]: https://docs.rs/linked-hash-map/*/linked_hash_map/struct.LinkedHashMap.html
 
 use crate::value::Value;
+#[cfg(feature = "enable-serde")]
 use serde::{de, ser};
 use std::borrow::Borrow;
 use std::fmt::{self, Debug};
@@ -258,6 +259,7 @@ impl Debug for Map<String, Value> {
     }
 }
 
+#[cfg(feature = "enable-serde")]
 impl ser::Serialize for Map<String, Value> {
     #[inline]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -274,6 +276,7 @@ impl ser::Serialize for Map<String, Value> {
     }
 }
 
+#[cfg(feature = "enable-serde")]
 impl<'de> de::Deserialize<'de> for Map<String, Value> {
     #[inline]
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>

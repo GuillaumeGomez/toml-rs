@@ -1,9 +1,15 @@
+#[cfg(feature = "serde")]
 use serde::{de, ser};
+#[cfg(feature = "serde")]
 use std::fmt;
 
+#[cfg(feature = "serde")]
 pub(crate) const NAME: &str = "$__toml_private_Spanned";
+#[cfg(feature = "serde")]
 pub(crate) const START: &str = "$__toml_private_start";
+#[cfg(feature = "serde")]
 pub(crate) const END: &str = "$__toml_private_end";
+#[cfg(feature = "serde")]
 pub(crate) const VALUE: &str = "$__toml_private_value";
 
 /// A spanned value, indicating the range at which it is defined in the source.
@@ -70,6 +76,7 @@ impl<T> Spanned<T> {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de, T> de::Deserialize<'de> for Spanned<T>
 where
     T: de::Deserialize<'de>,
@@ -123,6 +130,7 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
 impl<T: ser::Serialize> ser::Serialize for Spanned<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

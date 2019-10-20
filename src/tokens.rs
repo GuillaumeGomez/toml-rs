@@ -1,9 +1,13 @@
+#[cfg(feature = "serde")]
 use std::borrow::Cow;
 use std::char;
 use std::str;
+#[cfg(feature = "serde")]
 use std::string;
+#[cfg(feature = "serde")]
 use std::string::String as StdString;
 
+#[cfg(feature = "serde")]
 use self::Token::*;
 
 /// A span, designating a range of bytes where a token is located.
@@ -22,6 +26,7 @@ impl From<Span> for (usize, usize) {
 }
 
 #[derive(Eq, PartialEq, Debug)]
+#[cfg(feature = "serde")]
 pub enum Token<'a> {
     Whitespace(&'a str),
     Newline,
@@ -45,6 +50,7 @@ pub enum Token<'a> {
     },
 }
 
+#[cfg(feature = "serde")]
 #[derive(Eq, PartialEq, Debug)]
 pub enum Error {
     InvalidCharInString(usize, char),
@@ -75,12 +81,14 @@ struct CrlfFold<'a> {
     chars: str::CharIndices<'a>,
 }
 
+#[cfg(feature = "serde")]
 #[derive(Debug)]
 enum MaybeString {
     NotEscaped(usize),
     Owned(string::String),
 }
 
+#[cfg(feature = "serde")]
 impl<'a> Tokenizer<'a> {
     pub fn new(input: &'a str) -> Tokenizer<'a> {
         let mut t = Tokenizer {
@@ -178,6 +186,7 @@ impl<'a> Tokenizer<'a> {
         }
     }
 
+    #[cfg(feature = "serde")]
     pub fn table_key(&mut self) -> Result<(Span, Cow<'a, str>), Error> {
         let current = self.current();
         match self.next()? {
@@ -494,6 +503,7 @@ impl<'a> Iterator for CrlfFold<'a> {
     }
 }
 
+#[cfg(feature = "serde")]
 impl MaybeString {
     fn push(&mut self, ch: char) {
         match *self {
@@ -519,6 +529,7 @@ impl MaybeString {
     }
 }
 
+#[cfg(feature = "serde")]
 fn is_keylike(ch: char) -> bool {
     ('A' <= ch && ch <= 'Z')
         || ('a' <= ch && ch <= 'z')
@@ -527,6 +538,7 @@ fn is_keylike(ch: char) -> bool {
         || ch == '_'
 }
 
+#[cfg(feature = "serde")]
 impl<'a> Token<'a> {
     pub fn describe(&self) -> &'static str {
         match *self {

@@ -159,10 +159,14 @@ pub mod value;
 pub use crate::value::Value;
 mod datetime;
 
+#[cfg(feature = "serde")]
 pub mod ser;
+#[cfg(feature = "serde")]
 #[doc(no_inline)]
 pub use crate::ser::{to_string, to_string_pretty, to_vec, Serializer};
+#[cfg(feature = "serde")]
 pub mod de;
+#[cfg(feature = "serde")]
 #[doc(no_inline)]
 pub use crate::de::{from_slice, from_str, Deserializer};
 mod tokens;

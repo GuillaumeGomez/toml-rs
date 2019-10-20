@@ -2,6 +2,7 @@ use std::error;
 use std::fmt;
 use std::str::{self, FromStr};
 
+#[cfg(feature = "serde")]
 use serde::{de, ser};
 
 /// A parsed TOML datetime value
@@ -40,7 +41,9 @@ pub struct DatetimeParseError {
 //
 // In general the TOML encoder/decoder will catch this and not literally emit
 // these strings but rather emit datetimes as they're intended.
+#[cfg(feature = "serde")]
 pub const FIELD: &str = "$__toml_private_datetime";
+#[cfg(feature = "serde")]
 pub const NAME: &str = "$__toml_private_Datetime";
 
 #[derive(PartialEq, Clone)]
@@ -305,6 +308,7 @@ fn digit(chars: &mut str::Chars<'_>) -> Result<u8, DatetimeParseError> {
     }
 }
 
+#[cfg(feature = "serde")]
 impl ser::Serialize for Datetime {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -318,6 +322,7 @@ impl ser::Serialize for Datetime {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::Deserialize<'de> for Datetime {
     fn deserialize<D>(deserializer: D) -> Result<Datetime, D::Error>
     where
@@ -350,8 +355,10 @@ impl<'de> de::Deserialize<'de> for Datetime {
     }
 }
 
+#[cfg(feature = "serde")]
 struct DatetimeKey;
 
+#[cfg(feature = "serde")]
 impl<'de> de::Deserialize<'de> for DatetimeKey {
     fn deserialize<D>(deserializer: D) -> Result<DatetimeKey, D::Error>
     where
@@ -383,10 +390,12 @@ impl<'de> de::Deserialize<'de> for DatetimeKey {
     }
 }
 
+#[cfg(feature = "serde")]
 pub struct DatetimeFromString {
     pub value: Datetime,
 }
 
+#[cfg(feature = "serde")]
 impl<'de> de::Deserialize<'de> for DatetimeFromString {
     fn deserialize<D>(deserializer: D) -> Result<DatetimeFromString, D::Error>
     where
